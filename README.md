@@ -27,7 +27,7 @@ Example:
 
 ```ruby
 contacts = "Darth Vader <darth@vader.com>, Oops Sanderson <oops@gmail>, Han Solo <han@solo.com>, Mace X Windu <mace@windu.com>, Yoda <yoda@lightsaber.com>, Leia Organa leia@organa.com"
-ContactParser.new(contacts).bulk_parse)
+ContactParser.new(contacts).bulk_parse
 ```
 
 Will return the hash:
