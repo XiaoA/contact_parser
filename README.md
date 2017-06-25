@@ -1,8 +1,9 @@
 # ContactParser
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/contact_parser`. To experiment with that code, run `bin/console` for an interactive prompt.
+The `contact_parser` gem takes in a string of contacts with the format of `FirstName LastName <email@address.com>, etc` and returns a hash of values that can be treated like a traditional Ruby object.
 
-TODO: Delete this and the text above, and describe your gem
+Additionally, the gem also includes the `email_address` gem to perform email validations.
+
 
 ## Installation
 
@@ -22,7 +23,45 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Example:
+
+```ruby
+contacts = "Darth Vader <darth@vader.com>, Oops Sanderson <oops@gmail>, Han Solo <han@solo.com>, Mace X Windu <mace@windu.com>, Yoda <yoda@lightsaber.com>, Leia Organa leia@organa.com"
+ContactParser.new(contacts).bulk_parse)
+```
+
+Will return the hash:
+
+```ruby
+{
+  accepted: [
+    {
+      first_name: 'Darth',
+      last_name: 'Vader',
+      email: 'darth@vader.com'
+    },
+    {
+      first_name: 'Han',
+      last_name: 'Solo',
+      email: 'han@solo.com'
+    },
+    {
+      first_name: 'Mace',
+      last_name: 'Windu',
+      email: 'mace@windu.com'
+    },
+    {
+      first_name: 'Leia',
+      last_name: 'Organa',
+      email: 'leia@organa.com'
+    }
+  ],
+  rejected: [
+    'Oops Sanderson oops@gmail',
+    'Yoda yoda@lightsaber.com'
+  ]
+}
+```
 
 ## Development
 
