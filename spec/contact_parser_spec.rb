@@ -5,37 +5,101 @@ RSpec.describe ContactParser do
     expect(ContactParser::VERSION).not_to be nil
   end
 
-  it 'can parse emails by first and last name and email when in the format: Jon Snow <jon@snow.com>' do
-    contacts = "Darth Vader <darth@vader.com>, Oops Sanderson <oops@gmail>, Han Solo <han@solo.com>, Mace X Windu <mace@windu.com>, Yoda <yoda@lightsaber.com>, Leia Organa leia@organa.com"
+  it "parses contacts" do
+    contacts =
+      [
+        "John Doe <john@example.com>",
+        "Duffy Duck <duffy@duck.io>",
+        "Billy <billy@boo.mail.com>"
+      ].join(",")
+
     expect(ContactParser.new(contacts).bulk_parse).to eq(
-      {
-        accepted: [
-          {
-            first_name: 'Darth',
-            last_name: 'Vader',
-            email: 'darth@vader.com'
-          },
-          {
-            first_name: 'Han',
-            last_name: 'Solo',
-            email: 'han@solo.com'
-          },
-          {
-            first_name: 'Mace',
-            last_name: 'Windu',
-            email: 'mace@windu.com'
-          },
-          {
-            first_name: 'Leia',
-            last_name: 'Organa',
-            email: 'leia@organa.com'
-          }
-        ],
-        rejected: [
-          'Oops Sanderson oops@gmail',
-          'Yoda yoda@lightsaber.com'
-        ]
-      }
+      accepted: [
+        {
+          email: "john@example.com",
+          first_name: "John",
+          last_name: "Doe"
+        }, {
+          email: "duffy@duck.io",
+          first_name: "Duffy",
+          last_name: "Duck"
+        }, {
+          email: "billy@boo.mail.com",
+          first_name: "Billy",
+          last_name: "Billy"
+        }
+      ],
+      rejected: []
+    )
+  end
+
+  it "rejects contacts with invalid email" do
+    contacts =
+      [
+        "John Doe <john@example.com>",
+        "Duffy Duck <duffy@duck>",
+        "Billy Boo <billy@boo.mail.com>"
+      ].join(",")
+
+    expect(ContactParser.new(contacts).bulk_parse).to eq(
+      accepted: [
+        {
+          email: "john@example.com",
+          first_name: "John",
+          last_name: "Doe"
+        }, {
+          email: "billy@boo.mail.com",
+          first_name: "Billy",
+          last_name: "Boo"
+        }
+      ],
+      rejected: ["Duffy Duck duffy@duck"]
+    )
+  end
+
+  it "handles missing contacts" do
+    contacts =
+      [
+        "John Doe <john@example.com>",
+        "Billy Boo <billy@boo.mail.com>"
+      ].join(",,")
+
+    expect(ContactParser.new(contacts).bulk_parse).to eq(
+      accepted: [
+        {
+          email: "john@example.com",
+          first_name: "John",
+          last_name: "Doe"
+        }, {
+          email: "billy@boo.mail.com",
+          first_name: "Billy",
+          last_name: "Boo"
+        }
+      ],
+      rejected: []
+    )
+  end
+
+  it "handles line breaks between contacts" do
+    contacts =
+      [
+        "John Doe <john@example.com>",
+        "Billy Boo <billy@boo.mail.com>"
+      ].join(",\n\n")
+
+    expect(ContactParser.new(contacts).bulk_parse).to eq(
+      accepted: [
+        {
+          email: "john@example.com",
+          first_name: "John",
+          last_name: "Doe"
+        }, {
+          email: "billy@boo.mail.com",
+          first_name: "Billy",
+          last_name: "Boo"
+        }
+      ],
+      rejected: []
     )
   end
 end

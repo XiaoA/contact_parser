@@ -14,7 +14,7 @@ class ContactParser
   end
 
   def split_records
-    @str.split(',')
+    @str.split(',').reject(&:empty?)
   end
 
   def split_names_and_email(split_records_array)
