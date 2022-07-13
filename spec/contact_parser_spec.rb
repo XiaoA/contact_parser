@@ -102,4 +102,43 @@ RSpec.describe ContactParser do
       rejected: []
     )
   end
+
+  it "handles trailing comma" do
+    contacts = "Homer Simpson homer@simpson.com,\n\n"
+
+    expect(ContactParser.new(contacts).bulk_parse).to eq(
+      accepted: [
+        {
+          email: "homer@simpson.com",
+          first_name: "Homer",
+          last_name: "Simpson"
+        }
+      ],
+      rejected: []
+    )
+  end
+
+  it "handles empty entries" do
+    contacts =
+      [
+        "Homer Simpson <homer@simpson.com>",
+        "",
+        "Lisa Simpson lisa@simpson.com"
+      ].join(",\n\n")
+
+    expect(ContactParser.new(contacts).bulk_parse).to eq(
+      accepted: [
+        {
+          email: "homer@simpson.com",
+          first_name: "Homer",
+          last_name: "Simpson"
+        }, {
+          email: "lisa@simpson.com",
+          first_name: "Lisa",
+          last_name: "Simpson"
+        }
+      ],
+      rejected: []
+    )
+  end
 end

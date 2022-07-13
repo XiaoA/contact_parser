@@ -18,7 +18,7 @@ class ContactParser
   end
 
   def split_names_and_email(split_records_array)
-    split_records_array.map { |e| e.split(' ') }
+    split_records_array.map { |e| e.split(' ') }.reject(&:empty?)
   end
 
   def remove_angle_bracket_from_emails(name_and_email_array)
